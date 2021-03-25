@@ -3,6 +3,7 @@
 #include <string.h>
 #include <errno.h>
 #include "fileio.h"
+#include "bfengine.h"
 
 enum option_type {
 	OPTION_TYPE_EXISTANCE,
@@ -92,6 +93,22 @@ int main(int argc, char* argv[]) {
 	uint8_t* program = readFile(&programSize, programFileName);
 	if (program == NULL) return 1;
 
+	struct bfdata* bf = bf_init(program, programSize, 0x10000, 1);
+	if (bf == NULL) {
+		fputs("failed to initialize Brainf*ck engine\n", stderr);
+		free(program);
+		return 1;
+	}
+
+	int status = BF_STATUS_NORMAL;
+	for (;;) {
+		if (status != BF_STATUS_NORMAL) {
+			break;
+		}
+		status = bf_step(bf);
+	}
+
+	bf_free(bf);
 	free(program);
-	return 0;
+	return status == BF_STATUS_EXIT ? 0 : 1;
 }

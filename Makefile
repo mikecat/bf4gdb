@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-Wall -Wextra -std=c99 -pedantic -O2
 
 TARGET=bf4gdb
-OBJS=main.o fileio.o
+OBJS=main.o fileio.o bfengine.o
 
 $(TARGET): $(OBJS)
 	$(CC) -o $@ $^
